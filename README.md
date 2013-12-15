@@ -14,23 +14,19 @@ Example
 Generate the `authentication` skeleton for your app named `App` in the current path
 
 `$ gennaro -g authentication`
-
-
+--------------
 Generate the `authentication` skeleton for your app named `Example` the folder `server`
 
 `$ gennaro -g authentication -c Example -p server`
-
-
+--------------
 Use some other standalone skeleton
 
 `$ gennaro -g mycoolskeleton -c Example -p server -t my_templates`
-
-
+--------------
 Show all the built-in skeletons
 
 `$ gennaro -l`
-
-
+--------------
 Show the help
 
 `$ gennaro -h`
