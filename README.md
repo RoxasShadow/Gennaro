@@ -1,6 +1,6 @@
 Gennaro - È attento alla strada
 =================================================
-Gennaro is a skeleton generator for Sinatra, Padrino or what you want it does.
+Gennaro is a skeleton generator for Sinatra, Padrino or what you want.
 As built-in skeleton at the moment it has just `authentication`, but you are free to add any template you want.
 
 
