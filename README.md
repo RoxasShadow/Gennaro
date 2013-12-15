@@ -6,7 +6,7 @@ As built-in skeleton at the moment it has just `authentication`, but you are fre
 
 Install
 ====
-`gem install gennaro`
+`$ gem install gennaro`
 
 
 Example
