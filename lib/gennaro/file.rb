@@ -9,6 +9,10 @@
 #++
 
 class Gennaro
+  def delete_dir(path)
+    FileUtils.rm_r path if Dir.exists? path
+  end
+  
   protected
   def mkdir(path)
     Dir.mkdir path unless Dir.exists? path
@@ -31,9 +35,5 @@ class Gennaro
   def rename(file, first, after)
     new_file = file.gsub(first, after)
     FileUtils.mv file, new_file if file != new_file
-  end
-
-  def delete_dir(path)
-    FileUtils.rm_r path if Dir.exists? path
   end
 end

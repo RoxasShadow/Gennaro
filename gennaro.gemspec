@@ -15,4 +15,7 @@ Gem::Specification.new { |s|
   s.executables   = 'gennaro'
   s.files         = Dir.glob('lib/**/*.rb') + Dir.glob('templates/**/*')
   s.test_files    = Dir.glob('spec/**/*_spec.rb')
+
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rake'
 }
