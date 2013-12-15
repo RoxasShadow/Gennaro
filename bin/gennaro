@@ -1,0 +1,61 @@
+#! /usr/bin/env ruby
+#--
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+#                    Version 2, December 2004
+#
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+#   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+#
+#  0. You just DO WHAT THE FUCK YOU WANT TO.
+#++
+
+require 'optparse'
+require 'gennaro'
+
+options = {
+  :classname     => 'App',
+  :path          => Dir.pwd,
+  :force         => false,
+  :template_path => File.expand_path('../../templates', __FILE__)
+}
+
+opt = OptionParser.new { |o|
+  o.on '-c', '--classname CLASSNAME', 'main class name' do |classname|
+    options[:classname] = classname
+  end
+
+  o.on '-p', '--path PATH', 'installation path' do |path|
+    options[:path] = File.expand_path path
+  end
+
+  o.on '-f', '--force', 'eventually overwrite target app folder' do
+    options[:force] = true
+  end
+
+  o.on '-l', '--list', 'get a list of available templates' do
+    abort Gennaro.get_templates(options[:template_path]).join ', '
+  end
+
+  o.on '-g', '--generate TEMPLATE', 'generate the given template' do |template|
+    options[:template] = template
+  end
+
+  o.on '-t', '--template-path PATH', 'use given template folder' do |path|
+    options[:template_path] = File.expand_path path
+  end
+}
+
+help = opt.to_s
+opt.parse!
+
+abort help unless options.include? :template
+
+unless Gennaro.template_exists? options[:template_path], options[:template]
+  puts 'Template not found.'
+else
+  template = File.join options[:template_path], options[:template]
+  gennaro  = Gennaro.new template, options[:classname], options[:path], options[:force]
+  gennaro.generate!
+  gennaro.replace_tags!
+  puts "All done. Execute 'cd #{gennaro.path} && bundle install && rake test'"
+end
