@@ -11,7 +11,7 @@ describe 'App' do
 
   it 'creates an user' do
     username = 'Gennaro'
-    email    = 'gennaro@gennaro.ext'
+    email    = 'gennaro@bullo.pk'
     password = 'sonopropriounbullo!'
     permission_level = User.user
 
