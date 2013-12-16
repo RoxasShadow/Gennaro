@@ -8,8 +8,13 @@
 #  0. You just DO WHAT THE FUCK YOU WANT TO.
 #++
 
-class Gennaro
-  def self.version
-    '0.3'
+class ${ClassName}
+  helpers do
+    def fields?(*args)
+      args.each { |a|
+        return false unless params.include? a.to_s
+      }
+      true
+    end
   end
 end

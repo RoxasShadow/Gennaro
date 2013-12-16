@@ -57,5 +57,5 @@ else
   gennaro  = Gennaro.new template, options[:classname], options[:path], options[:force]
   gennaro.generate!
   gennaro.replace_tags!
-  puts "All done. Execute 'cd #{gennaro.path} && bundle install && rake test'"
+  puts "All done. Execute 'cd #{gennaro.path} && bundle install && rake'"
 end

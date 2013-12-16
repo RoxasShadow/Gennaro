@@ -12,7 +12,7 @@ class ${ClassName}
   helpers do
     def current_user
       guest = Guest.new
-      return guest unless cookie_exists? 'userid'
+      return guest unless cookie_exists? 'sessid'
       User.first(:session => get_cookie('sessid')) || guest
     end
 
@@ -20,5 +20,15 @@ class ${ClassName}
       current_user.is_a? User
     end
       alias_method :logged?, :logged_in?
+
+    def set_login(session)
+      set_cookie 'sessid', session
+    end
+      alias_method :set_login!, :set_login
+
+    def delete_login
+      delete_cookie 'sessid'
+    end
+      alias_method :delete_login!, :delete_login
   end
 end

@@ -18,19 +18,16 @@ class ${ClassName}
       }
     end
 
-    def delete_cookie(key)
-      response.set_cookie key, {
-        :value   => '',
-        :expires => Time.now
-      }
+    def get_cookie(key)
+      request.cookies[key]
     end
 
     def cookie_exists?(key)
-      request.cookies.include? key
+      !!get_cookie(key)
     end
 
-    def get_cookie(key)
-      cookie_exists?(key) ? request.cookies[key] : nil
+    def delete_cookie(key)
+      set_cookie key, '', '/', Time.now
     end
   end
 end

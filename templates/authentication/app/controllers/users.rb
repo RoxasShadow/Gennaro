@@ -9,78 +9,98 @@
 #++
 
 class ${ClassName}
-  post '/user/login/?' do
-    if logged_in?
-      return 'You are already logged in.'
-    end
-
-    if User.login params[:username], params[:password]
-      'Login successful.'
-    else
-      'Login failed.'
-    end
+  get '/user/login/?' do
+    erb :'user/login'
   end
 
-  post '/user/logout/?' do
+  get '/user/logout/?' do
     if logged_in?
       current_user.logout!
-      'Logout successful.'
+      delete_login!
+      @success = 'Logout successful.'
     else
-      'You are not logged in.'
+      @error   = 'You are not logged in.'
     end
+
+    erb :'user/logout'
+  end
+
+  get '/user/signup/?' do
+    erb :'user/signup'
+  end
+
+  get '/user/lost_password/?' do
+    erb :'user/lost_password'
+  end
+
+  get '/user/password_recovery/?' do
+    erb :'user/password_recovery'
+  end
+
+  post '/user/login/?' do
+    if not fields? :username, :password
+      @error   = 'You have to complete all the required fields.'
+    elsif logged_in?
+      @error   = 'You are already logged in.'
+    else
+      session  = User.login params[:username], params[:password]
+      if session
+        set_login! session
+        @success = 'Login successful.'
+      else
+        @error   = 'Login failed.'
+      end
+    end
+
+    erb :'user/login'
   end
 
   post '/user/signup/?' do
-    if logged_in?
-      return 'You are already logged in.'
-    end
-
-    if User.exists? params[:username]
-      'The username you have chosen is already taken.'
+    if not fields? :username, :email, :password
+      @error   = 'You have to complete all the required fields.'
+    elsif logged_in?
+      @error = 'You are already logged in.'
+    elsif User.exists? params[:username]
+      @error = 'The username you have chosen is already taken.'
     else
-      user = User.new params[:username], params[:email], params[:password], User.user
+      user = User.signup params[:username], params[:email], params[:password], User.user
       if user.errors.any?
-        user.errors.first
+        @error   = user.errors.first
       else
-        'Sign up successful.'
+        @success = 'Sign up successful.'
       end
     end
+
+    erb :'user/signup'
   end
 
   post '/user/lost_password/?' do
-    if logged_in?
-      return 'You are already logged in.'
+    if not fields? :username
+      @error   = 'You have to complete all the required fields.'
+    elsif logged_in?
+      @error   = 'You are already logged in.'
+    elsif User.exists? params[:username]
+      passcode = User.lost_password params[:username]
+      # send a mail or what you want
+      @success = 'You should receive a mail with the instructions to recover your password.'
+    else
+      @error   = 'The given username doesn\'t exists.'
     end
 
-    if User.exists? params[:username]
-      User.lost_password params[:username]
-    else
-      'The given username doesn\'t exists.'
-    end
+    erb :'user/lost_password'
   end
 
   post '/user/password_recovery/?' do
-    if logged_in?
-      return 'You are already logged in.'
-    end
-
-    if User.password_recovery params[:username], params[:passcode], params[:password]
-      'Password set successful.'
+    if not fields? :username, :passcode, :password
+      @error   = 'You have to complete all the required fields.'
+    elsif logged_in?
+      @error   = 'You are already logged in.'
+    elsif User.password_recovery params[:username], params[:passcode], params[:password]
+      @success = 'Password set successful.'
     else
-      'Error setting the password.'
-    end
-  end
-
-  post '/user/new_password/?' do
-    unless logged_in?
-      return 'You need to log in.'
+      @error   = 'Error setting the password.'
     end
 
-    user = current_user.new_password params[:curr_password], params[:password]
-    if user
-      'Your new password has been set.'
-    else
-      'Error setting your new password.'
-    end
+    erb :'user/password_recovery'
   end
 end

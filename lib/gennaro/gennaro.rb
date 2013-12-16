@@ -41,6 +41,7 @@ class Gennaro
       s = File.read f
       File.open(f, ?w) { |f|
         s.gsub! '${ClassName}',      @classname
+        s.gsub! '${AppName}',        @appname
         s.gsub! '${GenerateString}', get_random_string(36)
         f.write s
       }

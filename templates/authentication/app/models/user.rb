@@ -30,8 +30,9 @@ class User
   property :updated_at,       DateTime
 
   def password=(password)
-    self.salt = BCrypt::Engine.generate_salt
-    self.salted_password = BCrypt::Engine.hash_secret password, self.salt
+    salt                 = BCrypt::Engine.generate_salt
+    self.salt            = salt
+    self.salted_password = BCrypt::Engine.hash_secret password, salt
   end
 
   def founder?
@@ -73,11 +74,6 @@ class User
     true
   end
     alias_method :logout!, :logout
-
-  def new_password(curr_password, password)
-    return false unless self.salted_password == BCrypt::Engine.hash_secret(curr_password, self.salt)
-    self.password = password
-  end
 
   class << self
     def banned
@@ -127,7 +123,7 @@ class User
       user = User.first(:username => username)
       return false unless user
       if user.salted_password == BCrypt::Engine.hash_secret(password, user.salt)
-        user.update(:session => BCrypt::Engine.generate_salt)
+        return user.update(:session => BCrypt::Engine.generate_salt) ? user.session : false
       else
         false
       end
@@ -135,19 +131,6 @@ class User
       alias_method :login,        :authentication
       alias_method :signin,       :authentication
       alias_method :authenticate, :authentication
-
-    def logout(username)
-      user = User.first(:username => username)
-      return false unless user
-      user.update(:session => '')
-      user.session.empty?
-    end
-      alias_method :logout!, :logout
-
-    def logged?(username, session)
-      User.count(:username => username, :session => session) == 1
-    end
-      alias_method :logged_in?, :logged?
 
     def lost_password(username)
       user = User.first(:username => username)
@@ -167,13 +150,6 @@ class User
         :lost_password => '',
         :password      => password
       })
-    end
-
-    def new_password(username, curr_password, password)
-      user = User.first(:username => username)
-      return false unless user
-      return false unless user.salted_password == BCrypt::Engine.hash_secret(curr_password, user.salt)
-      user.update(:password => password)
     end
   end
 end

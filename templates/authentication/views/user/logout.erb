@@ -1,0 +1,9 @@
+<%= erb :'user/template/header' %>
+
+<% if defined? @error %>
+  <p class="error"><%= @error %></p>
+<% elsif defined? @success %>
+  <p class="success"><%= @success %></p>
+<% end %>
+
+<%= erb :'user/template/footer' %>
