@@ -60,14 +60,4 @@ describe 'App' do
 
     User.login(username, new_password).should be_true
   end
-
-  it 'set a new password' do
-    username      = 'Gennaro'
-    curr_password = 'sonounnuovobullo!'
-    password      = 'sonopropriounbullo!'
-
-    User.login(username, curr_password).should be_true
-    User.new_password(username, curr_password, password).should be_true
-    User.login(username, password).should be_true
-  end
 end

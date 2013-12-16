@@ -1,5 +1,5 @@
 require 'bundler'
 Bundler.require
 
-require './example'
+require './${AppName}'
 run ${ClassName}
