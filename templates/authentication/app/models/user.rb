@@ -72,6 +72,12 @@ class User
     self.session = ''
     true
   end
+    alias_method :logout!, :logout
+
+  def new_password(curr_password, password)
+    return false unless self.salted_password == BCrypt::Engine.hash_secret(curr_password, self.salt)
+    self.password = password
+  end
 
   class << self
     def banned
@@ -126,8 +132,9 @@ class User
         false
       end
     end
-      alias_method :login,  :authentication
-      alias_method :signin, :authentication
+      alias_method :login,        :authentication
+      alias_method :signin,       :authentication
+      alias_method :authenticate, :authentication
 
     def logout(username)
       user = User.first(:username => username)
@@ -135,6 +142,7 @@ class User
       user.update(:session => '')
       user.session.empty?
     end
+      alias_method :logout!, :logout
 
     def logged?(username, session)
       User.count(:username => username, :session => session) == 1
@@ -159,6 +167,13 @@ class User
         :lost_password => '',
         :password      => password
       })
+    end
+
+    def new_password(username, curr_password, password)
+      user = User.first(:username => username)
+      return false unless user
+      return false unless user.salted_password == BCrypt::Engine.hash_secret(curr_password, user.salt)
+      user.update(:password => password)
     end
   end
 end

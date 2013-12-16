@@ -15,5 +15,10 @@ class ${ClassName}
       return guest unless cookie_exists? 'userid'
       User.first(:session => get_cookie('sessid')) || guest
     end
+
+    def logged_in?
+      current_user.is_a? User
+    end
+      alias_method :logged?, :logged_in?
   end
 end

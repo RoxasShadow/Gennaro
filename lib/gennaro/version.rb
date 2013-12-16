@@ -10,6 +10,6 @@
 
 class Gennaro
   def self.version
-    '0.2'
+    '0.2.1'
   end
 end
