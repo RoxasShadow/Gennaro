@@ -4,7 +4,7 @@ require './spec'
 require 'rspec'
 require 'rack/test'
 
-describe 'App' do
+describe 'Stanco' do
   def app
     Sinatra::Application
   end
@@ -13,16 +13,16 @@ describe 'App' do
     username = 'Gennaro'
     email    = 'gennaro@bullo.pk'
     password = 'sonopropriounbullo!'
-    permission_level = User.user
+    level    = User.empty? ? User.founder : User.user
 
     User.exists?(username).should be_false
-    user = User.signup username, email, password, permission_level
-    user.errors.should be_empty
-    user.guest?.should be_false
-    user.user?.should  be_true
+    user = User.signup username, email, password, level
+    user.errors.should            be_empty
+    user.guest?.should            be_false
+    user.founder?.should          be_true
     User.exists?(username).should be_true
 
-    user = User.signup username, email, password, permission_level
+    user = User.signup username, email, password, level
     user.errors.should_not be_empty
   end
 
@@ -30,7 +30,7 @@ describe 'App' do
     username = 'Gennaro'
     password = 'sonopropriounbullo!'
 
-    User.exists?(username).should be_true
+    User.exists?(username).should         be_true
     User.login(username, password).should be_true
     user = User.get username
     user.session.should have(29).chars

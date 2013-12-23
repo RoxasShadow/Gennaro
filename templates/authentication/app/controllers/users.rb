@@ -10,6 +10,7 @@
 
 class ${ClassName}
   get '/user/login/?' do
+    @error = 'You are already logged in.' if logged_in?
     erb :'user/login'
   end
 
@@ -26,14 +27,17 @@ class ${ClassName}
   end
 
   get '/user/signup/?' do
+    @error = 'You are already logged in.' if logged_in?
     erb :'user/signup'
   end
 
   get '/user/lost_password/?' do
+    @error = 'You are already logged in.' if logged_in?
     erb :'user/lost_password'
   end
 
   get '/user/password_recovery/?' do
+    @error = 'You are already logged in.' if logged_in?
     erb :'user/password_recovery'
   end
 
@@ -63,7 +67,8 @@ class ${ClassName}
     elsif User.exists? params[:username]
       @error = 'The username you have chosen is already taken.'
     else
-      user = User.signup params[:username], params[:email], params[:password], User.user
+      level = User.empty? ? User.founder : User.user
+      user  = User.signup params[:username], params[:email], params[:password], level
       if user.errors.any?
         @error   = user.errors.first
       else

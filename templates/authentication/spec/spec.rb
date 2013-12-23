@@ -34,5 +34,5 @@ class ${ClassName} < Sinatra::Base
   Dir.glob('../app/controllers/*.rb') { |c| require c.chomp }
 
   DataMapper.finalize
-  User.auto_migrate!
+  DataMapper.auto_upgrade!
 end

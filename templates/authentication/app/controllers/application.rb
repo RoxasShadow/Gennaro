@@ -17,6 +17,6 @@ class ${ClassName}
   end
 
   get '/' do
-    'Hello, world!'
+    erb :index
   end
 end

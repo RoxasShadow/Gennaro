@@ -35,8 +35,12 @@ class User
     self.salted_password = BCrypt::Engine.hash_secret password, salt
   end
 
+  def banned?
+    self.permission_level == User.banned
+  end
+
   def founder?
-    self.id == 1
+    self.permission_level == User.founder
   end
 
   def admin?
@@ -56,12 +60,12 @@ class User
     self.permission_level == User.user
   end
 
-  def banned?
-    self.permission_level == User.banned
-  end
-
   def guest?
     false
+  end
+
+  def staff?
+    founder? || admin? || smod? || mod?
   end
 
   def logged?(session)
@@ -80,33 +84,41 @@ class User
       -1
     end
 
-    def admin
+    def founder
       0
     end
 
-    def smod
+    def admin
       1
+    end
+
+    def smod
+      2
     end
       alias_method :gmod, :smod
 
     def mod
-      2
-    end
-
-    def user
       3
     end
 
-    def guest
+    def user
       4
     end
 
+    def guest
+      5
+    end
+
+    def empty?
+      User.count == 0
+    end
+
     def get(username)
-      User.first(:username => username)
+      User.first username: username
     end
 
     def exists?(username)
-      User.count(:username => username) == 1
+      User.count(username: username) == 1
     end
     
     def registration(username, email, password, permission_level, stuff = {})
@@ -120,10 +132,10 @@ class User
       alias_method :signup, :registration
 
     def authentication(username, password)
-      user = User.first(:username => username)
+      user = User.first username: username
       return false unless user
       if user.salted_password == BCrypt::Engine.hash_secret(password, user.salt)
-        return user.update(:session => BCrypt::Engine.generate_salt) ? user.session : false
+        return user.update(session: BCrypt::Engine.generate_salt) ? user.session : false
       else
         false
       end
@@ -133,9 +145,9 @@ class User
       alias_method :authenticate, :authentication
 
     def lost_password(username)
-      user = User.first(:username => username)
+      user = User.first username: username
       return false unless user
-      user.update(:lost_password => BCrypt::Engine.generate_salt)
+      user.update lost_password: BCrypt::Engine.generate_salt
       user.lost_password
     end
 
