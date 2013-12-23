@@ -4,7 +4,7 @@ require './spec'
 require 'rspec'
 require 'rack/test'
 
-describe 'Stanco' do
+describe '${ClassName}' do
   def app
     Sinatra::Application
   end
