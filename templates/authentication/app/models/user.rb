@@ -18,8 +18,7 @@ class User
   property :email,    String, :unique => true,
                               :format => :email_address
 
-  property :permission_level, Integer, :default => 3,
-                                       :max     => 3
+  property :permission_level, Integer, :default => 3
 
   property :salt,             String, :length => 29
   property :salted_password,  String, :length => 60
