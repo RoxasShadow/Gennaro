@@ -60,4 +60,17 @@ describe '${ClassName}' do
 
     User.login(username, new_password).should be_true
   end
+
+  it 'change the user level' do
+    username  = 'Gennaro'
+    password  = 'sonounnuovobullo!'
+
+    User.login(username, password).should be_true
+    
+    user = User.get username
+    user.founder?
+
+    user.change_level User.banned
+    user.banned?
+  end
 end

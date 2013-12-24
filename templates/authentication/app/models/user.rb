@@ -12,16 +12,16 @@ class User
   include DataMapper::Resource
 
   property :id,       Serial
-  property :username, String, :unique => true,
-                              :length => 4..16,
-                              :format => /^[a-zA-Z0-9_\-\*^]*$/
-  property :email,    String, :unique => true,
-                              :format => :email_address
+  property :username, String, unique: true,
+                              length: 4..16,
+                              format: /^[a-zA-Z0-9_\-\*^]*$/
+  property :email,    String, unique: true,
+                              format: :email_address
 
-  property :permission_level, Integer, :default => 3
+  property :permission_level, Integer, default: 4
 
-  property :salt,             String, :length => 29
-  property :salted_password,  String, :length => 60
+  property :salt,             String, length: 29
+  property :salted_password,  String, length: 60
   property :lost_password,    String
   property :session,          String
 
@@ -78,6 +78,10 @@ class User
   end
     alias_method :logout!, :logout
 
+  def change_level(permission_level)
+    self.permission_level = permission_level
+  end
+
   class << self
     def banned
       -1
@@ -106,6 +110,18 @@ class User
 
     def guest
       5
+    end
+
+    def levels
+      {
+        :banned  => User.banned,
+        :founder => User.founder,
+        :admin   => User.admin,
+        :smod    => User.smod,
+        :gmod    => User.gmod,
+        :mod     => User.mod,
+        :user    => User.user
+      }
     end
 
     def empty?
@@ -161,6 +177,12 @@ class User
         :lost_password => '',
         :password      => password
       })
+    end
+
+    def change_level(username, permission_level)
+      user = User.first username: username
+      return false unless user
+      user.update permission_level: permission_level
     end
   end
 end

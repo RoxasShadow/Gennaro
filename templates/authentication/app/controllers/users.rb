@@ -41,6 +41,17 @@ class ${ClassName}
     erb :'user/password_recovery'
   end
 
+  get '/user/change_level/?' do
+    if not logged_in?
+      @error = 'You need to log in.'
+    elsif not current_user.staff?
+      @error = 'Go home, this is not a place for you.'
+    else
+      @users  = User.all
+    end
+    erb :'user/change_level'
+  end
+
   post '/user/login/?' do
     if not fields? :username, :password
       @error   = 'You have to complete all the required fields.'
@@ -107,5 +118,39 @@ class ${ClassName}
     end
 
     erb :'user/password_recovery'
+  end
+
+  post '/user/change_level/?' do
+    if not logged_in?
+      @error = 'You need to log in.'
+    elsif not current_user.staff?
+      @error = 'Go home, this is not a place for you.'
+    elsif fields? :username, :go
+      @user   = User.get params[:username]
+      @levels = User.levels
+    elsif not fields? :username, :level
+      @error = 'To change a user level, you need to send his username and level.'
+    else
+      level = case # I guess using #send could be dangerous
+        when 'banned'  then User.banned
+        when 'founder' then User.founder
+        when 'admin'   then User.admin
+        when 'smod'    then User.smod
+        when 'mod'     then User.mod
+        when 'user'    then User.user
+        else                nil
+      end
+      if level.nil?
+        @error = 'User level not recognized.'
+      else
+        user = User.change_level params[:username], level
+        if user
+          @success = 'User level set successful.'
+        else
+          @error   = 'Error setting the user level.'
+        end
+      end
+    end
+    erb :'user/change_level'
   end
 end
