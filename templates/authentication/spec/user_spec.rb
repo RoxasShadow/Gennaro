@@ -4,7 +4,7 @@ require './spec'
 require 'rspec'
 require 'rack/test'
 
-describe 'Pigro' do
+describe '${ClassName}' do
   def app
     Sinatra::Application
   end
