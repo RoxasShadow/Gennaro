@@ -21,6 +21,11 @@ class ${ClassName}
     end
       alias_method :logged?, :logged_in?
 
+    def staffer?
+      return false unless logged_in?
+      current_user.staff?
+    end
+
     def set_login(session)
       set_cookie 'sessid', session
     end

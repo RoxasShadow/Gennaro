@@ -1,7 +1,4 @@
 <%= erb :'template/header' %>
-  -- User --<br>
-  <a href="user/signup">Signup</a><br>
-  <a href="user/login">Login</a><br>
-  <a href="user/logout">Logout</a><br>
-  <a href="user/lost_password">Lost password</a>
+  <h1>${ClassName}</h1>
+  <p>Welcome back, <%= logged_in? ? current_user.username : 'guest' %> ´_ゝ｀</p>
 <%= erb :'template/footer' %>
