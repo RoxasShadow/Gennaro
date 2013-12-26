@@ -63,9 +63,15 @@ class User
     false
   end
 
+  def high_staff?
+    founder? || admin?
+  end
+    alias_method :high_staffer?, :high_staff?
+
   def staff?
     founder? || admin? || smod? || mod?
   end
+    alias_method :staffer?, :staff?
 
   def logged?(session)
     self.session == session
