@@ -2,33 +2,35 @@
 <%= erb :'template/header' %>
 
 <% if defined? @error %>
-  <p class="error"><%= @error %></p>
+  <div class="alert alert-danger"><%= @error %></div>
 <% elsif defined? @success %>
-  <p class="success"><%= @success %></p>
+  <div class="alert alert-success"><%= @success %></div>
 <% elsif defined? @users %>
-  <form action="<%= @current_url %>" method="post">
+  <form action="<%= @current_url %>" method="post" role="form">
+    <h2><%= @title %></h2>
 
-    <select name="username">
+    <select name="username" class="form-control">
       <% @users.each { |user| %>
         <option value="<%= user.username %>"><%= user.username %></option>
       <% } %>
     </select><br />
 
     <%= csrf_tag %>
-    <input type="submit" name="go" value="Change">
+    <button class="btn btn-lg btn-primary btn-block" type="submit" name="go">Change</button>
   </form>
 <% else %>
-  <form action="<%= @current_url %>" method="post">
+  <form action="<%= @current_url %>" method="post" role="form">
+    <h2><%= @title %></h2>
 
-    <select name="level">
+    <select name="level" class="form-control">
       <% @levels.each_pair { |key, val| %>
         <option value="<%= key %>" <%= 'selected' if val == @user.permission_level %>><%= key.capitalize %></option>
       <% } %>
     </select><br />
 
     <%= csrf_tag %>
-    <input type="hidden" value="<%= @user.username %>" name="username">
-    <input type="submit" value="Change">
+    <input  type="hidden" value="<%= @user.username %>" name="username">
+    <button class="btn btn-lg btn-primary btn-block"    type="submit" name="change">Change</button>
   </form>
 <% end %>
 
