@@ -57,13 +57,14 @@ class ${ClassName}
     elsif logged_in?
       @error   = 'You are already logged in.'
     else
-      session  = User.login params[:username], params[:password]
-      if session
-        set_login! session
-        @success = 'Login successful.'
-      else
-        @error   = 'Login failed.'
-      end
+      User.login(params[:username], params[:password]) { |session|
+        if session
+          set_login! session
+          @success = 'Login successful.'
+        else
+          @error   = 'Login failed.'
+        end
+      }
     end
     erb :'user/login'
   end
@@ -77,12 +78,13 @@ class ${ClassName}
       @error = 'The username you have chosen is already taken.'
     else
       level = User.empty? ? User.founder : User.user
-      user  = User.signup params[:username], params[:email], params[:password], level
-      if user.errors.any?
-        @error   = user.errors.first.first
-      else
-        @success = 'Sign up successful.'
-      end
+      User.signup(params[:username], params[:email], params[:password], level) { |errors|
+        if errors.any?
+          @error   = errors.first.first
+        else
+          @success = 'Sign up successful.'
+        end
+      }
     end
     erb :'user/signup'
   end
@@ -144,8 +146,7 @@ class ${ClassName}
       elsif level == User.founder || user.founder?
         @error = 'Foundership is untouchable.'
       else
-        user = User.change_level params[:username], level
-        if user
+        if User.change_level params[:username], level
           @success = 'User level set successful.'
         else
           @error   = 'Error setting the user level.'

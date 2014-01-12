@@ -139,24 +139,38 @@ class User
       User.count(username: username) == 1
     end
     
-    def registration(username, email, password, permission_level, stuff = {})
-      User.create({
+    def signup(username, email, password, permission_level, stuff = {})
+      res = User.create({
         :username         => username,
         :email            => email,
         :password         => password,
         :permission_level => permission_level
       }.merge(stuff))
+
+      if block_given?
+        yield  res.errors
+      else
+        return res
+      end
     end
-      alias_method :signup, :registration
+      alias_method :registration, :signup
 
     def authentication(username, password)
-      user = User.first username: username
-      return false unless user
-      if user.salted_password == BCrypt::Engine.hash_secret(password, user.salt)
-        return user.update(session: BCrypt::Engine.generate_salt) ? user.session : false
-      else
-        false
-      end
+      User.first(username: username).tap { |user|
+        res = if not user
+          false
+        elsif user.salted_password == BCrypt::Engine.hash_secret(password, user.salt)
+          user.update(session: BCrypt::Engine.generate_salt) ? user.session : false
+        else
+          false
+        end
+
+        if block_given?
+          yield  res
+        else
+          return res
+        end
+      }
     end
       alias_method :login,        :authentication
       alias_method :signin,       :authentication

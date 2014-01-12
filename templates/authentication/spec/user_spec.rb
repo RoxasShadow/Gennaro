@@ -25,8 +25,9 @@ describe '${ClassName}' do
     user.founder?.should           be_true
     User.exists?(@username).should be_true
 
-    user = User.signup @username, @email, @password, @level
-    user.errors.should_not be_empty
+    User.signup(@username, @email, @password, @level) { |errors|
+      errors.should_not be_empty
+    }
   end
 
   it 'logs in a user' do
